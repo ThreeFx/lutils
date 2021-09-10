@@ -34,9 +34,11 @@ until a flag separator (--) is encountered.
 # EXAMPLES
 
 Read stdin and output a formatted version:
+
 	ledger fmt
 
 Read the contents of _file1.leg_ and _file2.leg_ and replace them with a formatted version:
+
 	ledger fmt -w file1.leg file2.leg
 
 # AUTHORS

@@ -2,7 +2,7 @@ ifeq ($(PREFIX),)
     PREFIX := /usr/local
 endif
 
-.PHONY: all doc clean
+.PHONY: all doc clean install uninstall
 
 all: lutil doc
 
@@ -19,3 +19,7 @@ install:
 	install -m755 lutil $(PREFIX)/bin/lutil
 	mkdir -p $(PREFIX)/share/man/man1
 	install -m644 doc/lutil-fmt.1 $(PREFIX)/share/man/man1/lutil-fmt.1
+
+uninstall:
+	rm -f $(PREFIX)/bin/lutil
+	rm -f $(PREFIX)/share/man/man1/lutil-fmt.1
