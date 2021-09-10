@@ -1,7 +1,7 @@
 # lutils
 
 Utils for [plaintext accounting](https://plaintextaccounting.org) with
-[ledger](https://ledger-cli.org) or [hledger](https://hledger.org).
+[ledger](https://ledger-cli.org), [hledger](https://hledger.org) and friends.
 
 ## Commands
 
