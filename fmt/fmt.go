@@ -13,9 +13,11 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/spf13/pflag"
 )
@@ -44,7 +46,18 @@ func RunFmt() {
 		processFile("<standard input>", os.Stdin, os.Stdout)
 	} else {
 		for _, file := range pflag.Args() {
-			processFile(file, nil, os.Stdout)
+			switch info, err := os.Stat(file); {
+			case err != nil:
+				log.Printf("could not access \"%s\": %v", file, err)
+			case !info.IsDir():
+				if err := processFile(file, nil, os.Stdout); err != nil {
+					log.Printf("could not process \"%s\": %v", file, err)
+				}
+			default:
+				if err := filepath.WalkDir(file, visitFile); err != nil {
+					log.Printf("error during file system walk for \"%s\": %v", file, err)
+				}
+			}
 		}
 	}
 }
@@ -142,6 +155,21 @@ func format(in []byte) ([]byte, error) {
 	}
 
 	return b.Bytes(), nil
+}
+
+func visitFile(path string, f fs.DirEntry, err error) error {
+	if err != nil || !isLedgerFile(f) {
+		return err
+	}
+	if err := processFile(path, nil, os.Stdout); err != nil {
+		log.Printf("error processing \"%s\": %v", path, err)
+	}
+	return nil
+}
+
+func isLedgerFile(f fs.DirEntry) bool {
+	filename := f.Name()
+	return !f.IsDir() && !strings.HasPrefix(filename, ".") && strings.HasSuffix(filename, ".leg")
 }
 
 func backupFile(name string, content []byte, perm fs.FileMode) (string, error) {

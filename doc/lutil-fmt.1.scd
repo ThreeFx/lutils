@@ -12,7 +12,9 @@ lutil-fmt - format ledger files
 
 *lutil fmt* formats ledger files, similar to *gofmt*. By default it reads the
 files specified in _filenames_ and prints formatted contents of each file to
-stdout. If no filename is given, stdin is read instead.
+stdout. If no filename is given, stdin is read instead. Directories are
+traversed recursively. Ledger files are identified by the suffix .leg. Hidden
+files are ignored
 
 Flags and filenames can be mixed. *lutil fmt* will continue to interpret flags
 until a flag separator (--) is encountered.
