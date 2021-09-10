@@ -1,4 +1,11 @@
-package main
+// This file is part of lutils, utility programs for plaintext accounting
+//
+// Copyright 2021 Ben Fiedler
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+package fmt
 
 import (
 	"bufio"
@@ -17,13 +24,20 @@ var (
 	commentStart = regexp.MustCompile(`^(\s*)(; .*)$`)
 	hasAmount    = regexp.MustCompile(`^\s+(?P<account>(?:[^ ]+ ??)+)(?: {2,}(?P<amount>-?\d.*))?$`)
 
-	accountPadding = pflag.Int("accountPadding", 40, "Account length to pad for")
-	amountPadding  = pflag.Int("amountPadding", 13, "Amount length to pad for")
+	accountPadding *int
+	amountPadding  *int
 
-	overwriteFiles = pflag.BoolP("overwriteFiles", "w", false, "Overwrite input files")
+	overwriteFiles *bool
 )
 
-func runFmt() {
+func initFlags() {
+	accountPadding = pflag.Int("accountPadding", 40, "Account length to pad for")
+	amountPadding = pflag.Int("amountPadding", 13, "Amount length to pad for")
+	overwriteFiles = pflag.BoolP("overwriteFiles", "w", false, "Overwrite input files")
+}
+
+func RunFmt() {
+	initFlags()
 	pflag.Parse()
 
 	if pflag.NArg() == 0 {

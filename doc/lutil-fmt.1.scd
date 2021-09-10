@@ -43,4 +43,4 @@ Read the contents of _file1.leg_ and _file2.leg_ and replace them with a formatt
 
 # AUTHORS
 
-Developed and Maintained by Ben Fiedler <git@bfiedler.ch>
+Developed and maintained by Ben Fiedler <git@bfiedler.ch>
