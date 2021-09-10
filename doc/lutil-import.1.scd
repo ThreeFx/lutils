@@ -19,6 +19,10 @@ them on stdout. _type_ determins the semantics of the *lutil import* csv file.
 	Use _filename_ to determine whether transactions have already been booked.
 	Booked transactions are skipped during import.
 
+*-a* _account_, *--account* _account_
+	Use _account_ as source account for transactions. All transactions are
+	booked against _account_ and balanced with "TODO".
+
 # EXAMPLES
 
 Read a Kontoauszug and append ledger transactions to _ledger.leg_ using the

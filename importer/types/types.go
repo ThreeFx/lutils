@@ -21,10 +21,10 @@ type Importer interface {
 }
 
 type Transaction interface {
-	// Return the transaction's unique identifier. Identifiers may be
-	// reused across different importers.
+	// Return the transaction's unique identifier. Identifiers may be reused
+	// across different importers.
 	ID() string
 
 	// Writes a transaction to w in a ledger-compatible format
-	WriteTo(w io.Writer) (int64, error)
+	WriteTo(w io.Writer, accountName string) (int64, error)
 }

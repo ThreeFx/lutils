@@ -23,14 +23,23 @@ import (
 )
 
 var ledgerFile *string
+var accountName *string
 
-var importers = map[string]types.Importer{
-	"zkb":    &zkb.Importer{},
-	"viseca": &viseca.Importer{},
-}
+var (
+	importers = map[string]types.Importer{
+		"zkb":    &zkb.Importer{},
+		"viseca": &viseca.Importer{},
+	}
+
+	defaultAccountNames = map[string]string{
+		"zkb":    "ZKB",
+		"viseca": "ZKB Kreditkarte",
+	}
+)
 
 func initFlags() {
 	ledgerFile = flag.StringP("ledger", "l", "", "Existing ledger file (eliminate duplicate transactions)")
+	accountName = flag.StringP("account", "a", "", "Source account for transactions")
 }
 
 func RunImport() {
@@ -48,6 +57,10 @@ func RunImport() {
 	if !ok {
 		printImporters()
 		fmt.Fprintf(os.Stderr, "unknown importer: %v\n", i)
+	}
+
+	if *accountName == "" {
+		*accountName = defaultAccountNames[strings.ToLower(i)]
 	}
 
 	ts, err := importer.Parse(os.Stdin)
@@ -74,7 +87,7 @@ func RunImport() {
 			continue
 		}
 
-		_, err := t.WriteTo(os.Stdout)
+		_, err := t.WriteTo(os.Stdout, *accountName)
 		if err != nil {
 			log.Fatalf("could not write transaction: %v", err)
 		}

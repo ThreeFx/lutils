@@ -22,8 +22,6 @@ const (
 	urlPre  = "https://api.one.viseca.ch/v1/card/"
 	urlPost = "/transactions?stateType=unknown&offset=0&pagesize=1000&dateFrom=2021-01-01"
 
-	ZKBKreditkarte = "ZKB Kreditkarte"
-
 	ID           = 0
 	Datum        = 1
 	MerchantName = 2
@@ -37,10 +35,6 @@ type Transaction struct {
 	merchantName string
 	details      string
 	amount       float64
-}
-
-type Transactions struct {
-	Transactions []Transaction `json:"list"`
 }
 
 type Importer struct{}
@@ -107,7 +101,7 @@ func (t *Transaction) ID() string {
 	return t.id
 }
 
-func (t *Transaction) WriteTo(w io.Writer) (n int64, err error) {
+func (t *Transaction) WriteTo(w io.Writer, accountName string) (n int64, err error) {
 	date := t.date.Format("2006/01/02")
 	m, err := fmt.Fprintf(w, "%s *\n", date)
 	n += int64(m)
@@ -121,13 +115,7 @@ func (t *Transaction) WriteTo(w io.Writer) (n int64, err error) {
 		return n, fmt.Errorf("error writing transaction: %v", err)
 	}
 
-	//m, err = fmt.Fprintf(w, "    ; details \"%s\"\n", t.details)
-	//n += int64(m)
-	//if err != nil {
-	//	return n, fmt.Errorf("error writing transaction: %v", err)
-	//}
-
-	m, err = fmt.Fprintf(w, "    %-50s  %5.2f CHF\n", ZKBKreditkarte, -t.amount)
+	m, err = fmt.Fprintf(w, "    %-50s  %5.2f CHF\n", accountName, -t.amount)
 	n += int64(m)
 	if err != nil {
 		return n, fmt.Errorf("error writing transaction: %v", err)

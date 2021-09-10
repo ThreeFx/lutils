@@ -24,8 +24,6 @@ const (
 	ZKBReferenz      = 2
 	Belastung        = 4
 	Gutschrift       = 5
-
-	ZKBKonto string = "ZKB"
 )
 
 const formatString = `%s
@@ -43,9 +41,9 @@ type Transaction struct {
 	gutschrift   string // in CHF, format 1000.00
 }
 
-func (i *Importer) Name() string { return "ZKB" }
+func (i Importer) Name() string { return "ZKB" }
 
-func (i *Importer) Parse(inp io.Reader) ([]types.Transaction, error) {
+func (i Importer) Parse(inp io.Reader) ([]types.Transaction, error) {
 	in := csv.NewReader(inp)
 	in.Comma = ';'
 	in.LazyQuotes = true
@@ -95,7 +93,7 @@ func (t *Transaction) ID() string {
 	return t.zkbReferenz
 }
 
-func (t *Transaction) WriteTo(w io.Writer) (n int64, err error) {
+func (t *Transaction) WriteTo(w io.Writer, accountName string) (n int64, err error) {
 	date := t.date.Format("2006/01/02")
 	m, err := fmt.Fprintf(w, "%s *\n", date)
 	n += int64(m)
@@ -115,7 +113,7 @@ func (t *Transaction) WriteTo(w io.Writer) (n int64, err error) {
 	}
 
 	if t.gutschrift != "" {
-		m, err = fmt.Fprintf(w, "    %-50s  %8s CHF\n", ZKBKonto, t.gutschrift)
+		m, err = fmt.Fprintf(w, "    %-50s  %8s CHF\n", accountName, t.gutschrift)
 		n += int64(m)
 		if err != nil {
 			return n, fmt.Errorf("error writing transaction: %v", err)
@@ -129,7 +127,7 @@ func (t *Transaction) WriteTo(w io.Writer) (n int64, err error) {
 	}
 
 	if t.belastung != "" {
-		m, err = fmt.Fprintf(w, "    %-50s  %8s CHF\n", ZKBKonto, "-"+t.belastung)
+		m, err = fmt.Fprintf(w, "    %-50s  %8s CHF\n", accountName, "-"+t.belastung)
 		n += int64(m)
 		if err != nil {
 			return n, fmt.Errorf("error writing transaction: %v", err)
