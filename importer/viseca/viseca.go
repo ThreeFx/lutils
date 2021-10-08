@@ -13,6 +13,7 @@ import (
 	"io"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"git.sr.ht/~bfiedler/lutil/importer/types"
@@ -85,6 +86,11 @@ func transactionFromRecord(r []string) *Transaction {
 
 	if r[Details] == "Ihre Zahlung - Danke" {
 		// ignore balance payments, these are tracked from the ZKB side
+		return nil
+	}
+
+	if strings.HasPrefix(r[ID], "AUTH") {
+		// This is an unconfirmed transaction, do not import it
 		return nil
 	}
 
